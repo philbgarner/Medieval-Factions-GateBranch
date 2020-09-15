@@ -129,13 +129,46 @@ public class Gate {
 		return blocks;
 	}
 	
-	public boolean GateBlocksMatch(Material mat)
+	public boolean gateBlocksMatch(Material mat)
 	{
-		for (int y = coord1.getY(); y > coord2.getY(); y--)
+		int topY = coord1.getY();
+		int bottomY = coord2.getY();
+		if (coord2.getY() > coord1.getY())
 		{
-			for (int z = coord1.getZ(); z < coord2.getZ(); z++)
+			topY = coord2.getY();
+			bottomY = coord1.getY();
+		}
+		
+		int leftX = coord1.getX();
+		int rightX = coord2.getX();
+		if (coord2.getX() < coord1.getX())
+		{
+			leftX = coord2.getX();
+			rightX = coord1.getX();
+		}
+
+		int leftZ = coord1.getZ();
+		int rightZ = coord2.getZ();
+		if (coord2.getZ() < coord1.getZ())
+		{
+			leftZ = coord2.getZ();
+			rightZ = coord1.getZ();
+		}
+		
+		if (isParallelToZ())
+		{
+			rightX++;
+		}
+		else if (isParallelToX())
+		{
+			rightZ++;
+		}
+		
+		for (int y = topY; y > bottomY; y--)
+		{
+			for (int z = leftZ; z < rightZ; z++)
 			{
-				for (int x = coord1.getX(); x < coord2.getX(); x++)
+				for (int x = leftX; x < rightX; x++)
 				{
 					if (!world.getBlockAt(x, y, z).getType().equals(mat))
 					{
@@ -216,7 +249,7 @@ public class Gate {
 				coord2 = null;
 				return false;
 			}
-			if (!GateBlocksMatch(material))
+			if (!gateBlocksMatch(material))
 			{
 				coord2 = null;
 				return false;
@@ -584,6 +617,6 @@ public class Gate {
 	
 	public String coordsToString()
 	{
-		return String.format("(%d, %d - %d, %d)", coord1.getX(), coord1.getY(), coord2.getX(), coord2.getY());
+		return String.format("(%d, %d, %d - %d, %d, %d)", coord1.getX(), coord1.getY(), coord1.getZ(), coord2.getX(), coord2.getY(), coord2.getZ());
 	}
 }
