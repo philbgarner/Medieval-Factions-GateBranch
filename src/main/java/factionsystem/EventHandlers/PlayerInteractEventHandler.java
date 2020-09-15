@@ -167,7 +167,7 @@ public class PlayerInteractEventHandler {
         				else
         				{
         					if (!UtilitySubsystem.getFaction(claimedChunk.getHolder(), main.factions).isOwner(player.getUniqueId())
-        							|| !UtilitySubsystem.getFaction(claimedChunk.getHolder(), main.factions).isOfficer(player.getUniqueId()))
+        							&& !UtilitySubsystem.getFaction(claimedChunk.getHolder(), main.factions).isOfficer(player.getUniqueId()))
         					{
             					player.sendMessage(ChatColor.RED + "You must be a faction owner or officer to create a gate.");
             					return;

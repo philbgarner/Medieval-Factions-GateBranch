@@ -108,8 +108,7 @@ public class Faction {
     
     public void RemoveGate(Gate gate)
     {
-    	// TODO: Call a cleanup/remove method on the gate that clears its blocks before
-    	// getting removed from the save list.
+    	gate.FillGate();
     	gates.remove(gate);
     }
 

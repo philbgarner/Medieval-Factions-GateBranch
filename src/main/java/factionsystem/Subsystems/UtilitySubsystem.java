@@ -427,15 +427,30 @@ public class UtilitySubsystem {
     	return null;
     }
     
-    public boolean isGateOverlapping(String factionName, Gate gate)
+    public boolean isGateBlock(Block targetBlock)
     {
-    	Faction faction = getFaction(factionName, main.factions);
-    	for (Gate factionGate : faction.getGates())
+    	for (Faction faction : main.factions)
     	{
-    		return true;	
+    		for (Gate gate : faction.getGates())
+    		{
+    			if (gate.hasBlock(targetBlock))
+    			{
+    				return true;
+    			}
+    		}
     	}
     	return false;
     }
+    
+//    public boolean isGateOverlapping(String factionName, Gate gate)
+//    {
+//    	Faction faction = getFaction(factionName, main.factions);
+//    	for (Gate factionGate : faction.getGates())
+//    	{
+//    		return true;	
+//    	}
+//    	return false;
+//    }
 
     public void scheduleAutosave() {
         System.out.println("Scheduling hourly auto save...");
@@ -505,6 +520,36 @@ public class UtilitySubsystem {
     }
 
     // static methods ----------------------------
+    
+    public static boolean isGateBlock(Block targetBlock, ArrayList<Faction> factions)
+    {
+    	for (Faction faction : factions)
+    	{
+    		for (Gate gate : faction.getGates())
+    		{
+    			if (gate.hasBlock(targetBlock))
+    			{
+    				return true;
+    			}
+    		}
+    	}
+    	return false;
+    }
+    
+    public static Gate getGate(Block targetBlock, ArrayList<Faction> factions)
+    {
+    	for (Faction faction : factions)
+    	{
+    		for (Gate gate : faction.getGates())
+    		{
+    			if (gate.hasBlock(targetBlock))
+    			{
+    				return gate;
+    			}
+    		}
+    	}
+    	return null;
+    }
 
     public static void startCreatingGate(Main main, Player player, Block clickedBlock)
     {
@@ -634,6 +679,17 @@ public class UtilitySubsystem {
         return name.toString();
     }
 
+    public static String createStringFromArgIndexOnwards(int index, String[] args) {
+        StringBuilder name = new StringBuilder();
+        for (int i = index; i < args.length; i++) {
+            name.append(args[i]);
+            if (!(i == args.length - 1)) {
+                name.append(" ");
+            }
+        }
+        return name.toString();
+    }
+       
     public static void removeAllClaimedChunks(String factionName, ArrayList<ClaimedChunk> claimedChunks) {
 
         Iterator<ClaimedChunk> itr = claimedChunks.iterator();
