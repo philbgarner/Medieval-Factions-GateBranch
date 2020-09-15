@@ -131,7 +131,7 @@ public class Gate {
 	
 	public boolean GateBlocksMatch(Material mat)
 	{
-		for (int y = coord1.getY(); y < coord2.getY(); y++)
+		for (int y = coord1.getY(); y > coord2.getY(); y--)
 		{
 			for (int z = coord1.getZ(); z < coord2.getZ(); z++)
 			{
@@ -164,7 +164,7 @@ public class Gate {
 			if (!clickedBlock.getType().equals(material))
 			{
 				return false;
-			}
+			}		
 			// GetDim methods use coord2 object.
 			coord2 = new GateCoord(clickedBlock);
 			if (GetDimX() > 1 && GetDimY() > 1 && GetDimZ() > 1)
@@ -218,6 +218,7 @@ public class Gate {
 			}
 			if (!GateBlocksMatch(material))
 			{
+				coord2 = null;
 				return false;
 			}
 		}
