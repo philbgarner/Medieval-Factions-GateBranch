@@ -48,6 +48,7 @@ public class CommandSubsystem {
                     }
                 }
 
+               
                 // create command
                 if (args[0].equalsIgnoreCase("create") ) {
                     if (sender.hasPermission("mf.create")|| sender.hasPermission("mf.default")) {
@@ -612,6 +613,13 @@ public class CommandSubsystem {
                     return true;
                 }
 
+                // gate management commands
+                if (args[0].equalsIgnoreCase("gate") || args[0].equalsIgnoreCase("gt")) {
+                	GateCommand command = new GateCommand(main);
+                	command.handleGate(sender, args);
+                	return true;
+                }
+                
                 // admin commands ----------------------------------------------------------------------------------
 
                 // forcesave command

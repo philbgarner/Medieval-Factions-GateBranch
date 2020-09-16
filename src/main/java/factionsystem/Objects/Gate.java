@@ -1,6 +1,10 @@
 package factionsystem.Objects;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -8,12 +12,29 @@ import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
+
 import factionsystem.Main;
 import factionsystem.Subsystems.ConfigSubsystem;
 
 public class Gate {
+	
+	private class GateJson {
+		public String name;
+		public String factionName;
+		public String open;
+		public String vertical;
+		public String material;
+		public String world;
+		public String coord1;
+		public String coord2;
+		public String triggerCoord;
+	}
 
 	private String name = "gateName";
+	private String factionName = "";
 	private boolean open = false;	
 	private boolean vertical = true;
 	private GateCoord coord1 = null;
@@ -26,6 +47,54 @@ public class Gate {
 	
 	private enum GateStatus { READY, OPENING, CLOSING };
 	private GateStatus gateStatus = GateStatus.READY;
+	
+    public Map<String, String> save() {
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();;
+        Map<String, String> saveMap = new HashMap<>();
+
+        saveMap.put("name", name);
+        saveMap.put("factionName", factionName);
+        saveMap.put("open", String.valueOf(open));
+        saveMap.put("vertical", String.valueOf(vertical));
+        saveMap.put("material", material.name());
+        saveMap.put("world", world.getName());
+        saveMap.put("coord1", coord1.toString());
+        saveMap.put("coord2", coord2.toString());
+        saveMap.put("triggerCoord", trigger.toString());
+
+        return saveMap;
+    }
+    
+
+    public static Gate load(String jsonData, Main main) {
+    	System.out.println("Gate Load");
+    	
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();;
+
+        Gate newGate = new Gate(main);
+
+        try
+        {
+	        GateJson data = gson.fromJson(jsonData, GateJson.class);
+	        
+	        System.out.println("Loading gate " + data.name);
+	        
+	        newGate.world = main.getServer().getWorld(data.world);
+	        newGate.coord1 = new GateCoord();
+	        newGate.coord1 = GateCoord.fromString(data.coord1, main);
+	        newGate.coord2 = new GateCoord();
+	        newGate.coord2 = GateCoord.fromString(data.coord2, main);
+	        newGate.trigger = new GateCoord();
+	        newGate.trigger = GateCoord.fromString(data.triggerCoord, main);
+	        newGate.material = Material.getMaterial(data.material);
+        }
+        catch (Exception e)
+        {
+        	System.out.println("ERROR: Could not load faction gate.\n" + jsonData + "\n" + e.getMessage());
+        }
+        
+        return newGate;
+    }
 	
 	public boolean isIntersecting(Gate gate)
 	{
@@ -504,6 +573,7 @@ public class Gate {
 	        				{
 	        					b = world.getBlockAt(coord1.getX(), blockY, z);
 	        					b.setType(material);
+	        					b.getState().update(true);
 	        					world.playSound(b.getLocation(), soundEffect, 0.1f, 0.1f);
 	        				}
 	        				if (blockY == bottomY + 1)
@@ -608,7 +678,8 @@ public class Gate {
 	{
 		if (targetBlock.getX() >= coord1.getX() && targetBlock.getX() <= coord2.getX()
 				&& targetBlock.getY() >= coord1.getY() && targetBlock.getY() <= coord2.getY()
-				&& targetBlock.getZ() >= coord1.getZ() && targetBlock.getZ() <= coord2.getZ())
+				&& targetBlock.getZ() >= coord1.getZ() && targetBlock.getZ() <= coord2.getZ()
+				&& targetBlock.getWorld().getName().equalsIgnoreCase(coord1.getWorld()))
 		{
 			return true;
 		}
@@ -617,6 +688,10 @@ public class Gate {
 	
 	public String coordsToString()
 	{
-		return String.format("(%d, %d, %d - %d, %d, %d)", coord1.getX(), coord1.getY(), coord1.getZ(), coord2.getX(), coord2.getY(), coord2.getZ());
+		if (coord1 == null || coord2 == null)
+			return "";
+		
+		return String.format("(%d, %d, %d to %d, %d, %d) Trigger (%d, %d, %d)", coord1.getX(), coord1.getY(), coord1.getZ(), coord2.getX(), coord2.getY(), coord2.getZ(),
+				trigger.getX(), trigger.getY(), trigger.getZ());
 	}
 }

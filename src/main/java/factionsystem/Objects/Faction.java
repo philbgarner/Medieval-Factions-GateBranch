@@ -65,8 +65,8 @@ public class Faction {
 
     // Must recieve json data
     public Faction(Map<String, String> data, Main main) {
-        this.load(data);
         this.main = main;
+        this.load(data);
     }
     
     public ArrayList<Gate> getGates()
@@ -79,7 +79,7 @@ public class Faction {
     	for(Gate g : gates)
     	{
     		if (g.getTrigger().getX() == block.getX() && g.getTrigger().getY() == block.getY() && g.getTrigger().getZ() == block.getZ() &&
-    				g.getTrigger().getWorld() == block.getWorld().getName())
+    				g.getTrigger().getWorld().equalsIgnoreCase(block.getWorld().getName()))
     		{
     			return true;
     		}
@@ -93,7 +93,7 @@ public class Faction {
     	for(Gate g : gates)
     	{
     		if (g.getTrigger().getX() == block.getX() && g.getTrigger().getY() == block.getY() && g.getTrigger().getZ() == block.getZ() &&
-    				g.getTrigger().getWorld() == block.getWorld().getName())
+    				g.getTrigger().getWorld().equalsIgnoreCase(block.getWorld().getName()))
     		{
     			gateList.add(g);
     		}
@@ -385,6 +385,17 @@ public class Faction {
         saveMap.put("owner", gson.toJson(owner));
         saveMap.put("cumulativePowerLevel", gson.toJson(cumulativePowerLevel));
         saveMap.put("location", gson.toJson(saveLocation(gson)));
+        
+        ArrayList<String> gateList = new ArrayList<String>(); 
+        for (Gate gate : gates)
+        {
+        	Map <String, String> map = gate.save();
+//            for (String key : map.keySet()) {
+//                System.out.println(key + "=" + map.get(key));
+//            }
+        	gateList.add(gson.toJson(map));
+        }
+        saveMap.put("factionGates", gson.toJson(gateList));
 
         return saveMap;
     }
@@ -420,6 +431,17 @@ public class Faction {
         owner = UUID.fromString(gson.fromJson(data.get("owner"), String.class));
         cumulativePowerLevel = gson.fromJson(data.get("cumulativePowerLevel"), Integer.TYPE);
         factionHome = loadLocation(gson.fromJson(data.get("location"), mapType), gson);
+        
+        System.out.println("Loading Fation Gates...");
+        ArrayList<String> gateList = new ArrayList<String>();
+        gateList = gson.fromJson(data.get("factionGates"), arrayListTypeString);
+        for (String item : gateList)
+        {
+        	System.out.println("Loading " + item);
+        	Gate g = Gate.load(item, main);
+        	System.out.println("Gate trigger at " + g.coordsToString());
+        	gates.add(g);
+        }
     }
 
     private Location loadLocation(HashMap<String, String> data, Gson gson){

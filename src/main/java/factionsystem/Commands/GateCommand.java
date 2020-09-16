@@ -23,7 +23,7 @@ public class GateCommand {
 		main = plugin;
 	}
 	
-	public void createGate(CommandSender sender, String[] args)
+	public void handleGate(CommandSender sender, String[] args)
 	{
 		if (sender instanceof Player)
 		{

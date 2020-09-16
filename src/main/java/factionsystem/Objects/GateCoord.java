@@ -2,6 +2,8 @@ package factionsystem.Objects;
 
 import org.bukkit.block.Block;
 
+import factionsystem.Main;
+
 public class GateCoord {
 	
 	private int x;
@@ -12,6 +14,27 @@ public class GateCoord {
 	public String getWorld()
 	{
 		return world;
+	}
+	
+	public String toString()
+	{
+		return String.format("%d,%d,%d,%s", x, y, z, world);
+	}
+	
+	public static GateCoord fromString(String data, Main main)
+	{
+		String parts[] = data.split(",");
+		for (String part : parts)
+		{
+			System.out.println(part);
+		}
+
+		GateCoord coord = new GateCoord();
+		coord.x = Integer.parseInt(parts[0]);
+		coord.y = Integer.parseInt(parts[1]);
+		coord.z = Integer.parseInt(parts[2]);
+		coord.world = parts[3];
+		return coord;
 	}
 	
 	public int getX()
@@ -25,6 +48,12 @@ public class GateCoord {
 	public int getZ()
 	{
 		return z;
+	}
+	
+	// Only use this when instantiating for load from JSON
+	public GateCoord()
+	{
+		
 	}
 	
 	public GateCoord(int X, int Y, int Z, String World)

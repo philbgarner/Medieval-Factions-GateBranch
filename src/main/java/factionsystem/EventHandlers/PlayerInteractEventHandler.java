@@ -112,10 +112,13 @@ public class PlayerInteractEventHandler {
         			ClaimedChunk claim = UtilitySubsystem.getClaimedChunk(clickedBlock.getChunk().getX(), clickedBlock.getChunk().getZ(),
         					clickedBlock.getChunk().getWorld().getName(), main.claimedChunks);
         			Faction faction = UtilitySubsystem.getFaction(claim.getHolder(), main.factions);
+        			System.out.println("Lever check for faction " + faction.getName());
         			if (faction.hasGateTrigger(clickedBlock))
         			{
+        				System.out.println("Has gate check for faction " + faction.getName());
         				for (Gate g : faction.getGatesForTrigger(clickedBlock))
         				{
+        					System.out.println("Gate for trigger" + g.getName());
         					BlockData blockData = clickedBlock.getBlockData();
         					Powerable powerable = (Powerable) blockData;
         					if (powerable.isPowered())
