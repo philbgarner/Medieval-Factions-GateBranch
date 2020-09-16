@@ -435,12 +435,19 @@ public class Faction {
         System.out.println("Loading Fation Gates...");
         ArrayList<String> gateList = new ArrayList<String>();
         gateList = gson.fromJson(data.get("factionGates"), arrayListTypeString);
-        for (String item : gateList)
+        if (gateList != null)
         {
-        	System.out.println("Loading " + item);
-        	Gate g = Gate.load(item, main);
-        	System.out.println("Gate trigger at " + g.coordsToString());
-        	gates.add(g);
+	        for (String item : gateList)
+	        {
+	        	System.out.println("Loading " + item);
+	        	Gate g = Gate.load(item, main);
+	        	System.out.println("Gate trigger at " + g.coordsToString());
+	        	gates.add(g);
+	        }
+        }
+        else
+        {
+        	System.out.println("Could not load gates because the collection 'factionGates' did not exist in the factions JSON file. Are you upgrading from a previous version? Setting default.");
         }
     }
 
